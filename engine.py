@@ -8,6 +8,7 @@ import torchvision.models.detection.mask_rcnn
 from coco_utils import get_coco_api_from_dataset
 from coco_eval import CocoEvaluator
 import utils
+import numpy as np
 
 
 def train_one_epoch(model, optimizer, data_loader, device, epoch, print_freq):
@@ -81,7 +82,7 @@ def evaluate(model, data_loader, device):
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
     # we are using 5, not the default 17 keypoitns
-    coco_evaluator.coco_eval['keypoints'].params.kpt_oks_sigmas = [.5, .5, .5, .5, .5] / 10.0
+    coco_evaluator.coco_eval['keypoints'].params.kpt_oks_sigmas = np.array([.5, .5, .5, .5, .5]) / 10.0
 
     for images, targets in metric_logger.log_every(data_loader, 100, header):
         images = list(img.to(device) for img in images)
